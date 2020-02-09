@@ -1,4 +1,4 @@
-defmodule NanoCi.Builder.Main do
+defmodule NanoCi.Builder.Runner do
   alias NanoCi.Build
   alias NanoCi.GitRepo
   alias NanoCi.Builder.Docker
@@ -48,11 +48,11 @@ defmodule NanoCi.Builder.Main do
       "git clone #{repo.git_url} /workdir"
     )
 
-    {build, ref}
+    ref
   end
 
-  defp parse_steps({build, ref}) do
-    {status, output} = Docker.exec(ref, "cat /workdir/.nano.yaml")
+  defp parse_steps(ref) do
+    {status, _output} = Docker.exec(ref, "cat /workdir/.nano.yaml")
 
     steps =
       if status == :ok do
@@ -62,20 +62,20 @@ defmodule NanoCi.Builder.Main do
         ["apk add rust cargo", "cd /workdir && cargo test"]
       end
 
-    {build, ref, steps}
+    {ref, steps}
   end
 
-  defp run_steps({build, ref, steps}) do
-    results = steps |> Enum.map(&run_step(build, ref, &1))
-    {build, ref, results}
+  defp run_steps({ref, steps}) do
+    results = steps |> Enum.map(&run_step(ref, &1))
+    {ref, results}
   end
 
-  defp run_step(build, ref, step) do
+  defp run_step(ref, step) do
     Docker.exec(ref, step)
   end
 
-  defp summarize_results({build, ref, results}) do
-    result = Enum.all?(results, fn {s, _} => s == :ok end)
+  defp summarize_results({ref, results}) do
+    result = Enum.all?(results, fn {s, _} -> s == :ok end)
     IO.puts("RESULT: #{result}")
     ref
   end
