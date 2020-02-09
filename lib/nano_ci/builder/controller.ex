@@ -29,8 +29,7 @@ defmodule NanoCi.Builder.Controller do
         schedule(build, 1000)
         {:noreply, state}
 
-      x ->
-        IO.inspect(x)
+      _ ->
         {:noreply, Map.delete(state, build.id)}
     end
   end
