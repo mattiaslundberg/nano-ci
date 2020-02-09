@@ -27,6 +27,12 @@ defmodule NanoCiWeb.BuildController do
     conn |> put_status(:not_found) |> json(%{})
   end
 
+  def index(conn, _) do
+    builds = Build |> Repo.all() |> Enum.map(fn b -> %{id: b.id, status: b.status} end)
+
+    conn |> json(builds)
+  end
+
   def display_build(conn, build = %Build{}) do
     conn
     |> json(%{status: build.status, build_log: build.build_log})
