@@ -12,7 +12,8 @@ defmodule NanoCiWeb.BuildController do
 
   def build(conn, _params) do
     conn
-    |> json(%{"status" => "error"})
+    |> put_status(:bad_request)
+    |> json(%{})
   end
 
   defp create_build(conn, repo = %GitRepo{}, revision) do
@@ -32,6 +33,7 @@ defmodule NanoCiWeb.BuildController do
 
   defp create_build(conn, _, _) do
     conn
-    |> json(%{"status" => "error"})
+    |> put_status(:bad_request)
+    |> json(%{})
   end
 end
