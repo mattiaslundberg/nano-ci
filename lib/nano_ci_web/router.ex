@@ -22,6 +22,6 @@ defmodule NanoCiWeb.Router do
   scope "/api", NanoCiWeb do
     pipe_through :api
 
-    post "/build", BuildController, :build
+    resources "/build", BuildController, only: [:create, :show]
   end
 end

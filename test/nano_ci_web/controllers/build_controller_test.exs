@@ -20,4 +20,16 @@ defmodule NanoCiWeb.BuildControllerTest do
     assert %{"build_id" => bid} = json_response(conn, 201)
     assert is_number(bid)
   end
+
+  test "Get build status", %{conn: conn} do
+    repo = %GitRepo{} |> GitRepo.changeset(%{name: "first"}) |> Repo.insert!()
+
+    build =
+      %Build{}
+      |> Build.changeset(%{repo_id: repo.id, revision: "asdf", status: "custom"})
+      |> Repo.insert!()
+
+    conn = get(conn, "/api/build/#{build.id}")
+    assert json_response(conn, 200) == %{"status" => "custom"}
+  end
 end
