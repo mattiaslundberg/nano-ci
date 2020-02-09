@@ -1,3 +1,21 @@
 /* This file is for your main application css. */
 
 @import "./phoenix.css";
+
+.build-list {
+    list-style: none;
+    font-size: 1.2em;
+}
+
+.build-list li {
+    margin: 0;
+    padding: 1rem;
+}
+
+.build-list li:nth-child(2n) {
+    background: #dcdcdc;
+}
+
+.build-status {
+    padding-left: 3rem;
+}
