@@ -19,8 +19,9 @@ defmodule NanoCiWeb.Router do
     get "/", PageController, :index
   end
 
-  # Other scopes may use custom stacks.
-  # scope "/api", NanoCiWeb do
-  #   pipe_through :api
-  # end
+  scope "/api", NanoCiWeb do
+    pipe_through :api
+
+    post "/build", BuildController, :build
+  end
 end
