@@ -14,7 +14,8 @@ defmodule NanoCi.Application do
       NanoCiWeb.Endpoint,
       # Starts a worker by calling: NanoCi.Worker.start_link(arg)
       # {NanoCi.Worker, arg},
-      NanoCi.Builder.Controller
+      NanoCi.Builder.Controller,
+      NanoCi.StatusWriter
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html

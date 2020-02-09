@@ -2,6 +2,7 @@ defmodule NanoCi.Builder.Runner do
   alias NanoCi.Build
   alias NanoCi.GitRepo
   alias NanoCi.Builder.Docker
+  alias NanoCi.StatusWriter
   use Task
 
   def start_link(repo = %GitRepo{}, build = %Build{}) do
@@ -9,6 +10,8 @@ defmodule NanoCi.Builder.Runner do
   end
 
   def run(repo, build) do
+    StatusWriter.set_status(build, "running")
+
     {repo, build}
     |> start_container()
     |> checkout_code()
@@ -50,10 +53,10 @@ defmodule NanoCi.Builder.Runner do
         "git clone #{repo.git_url} /workdir"
       )
 
-    ref
+    {build, ref}
   end
 
-  defp parse_steps(ref) do
+  defp parse_steps({build, ref}) do
     {status, _output} = Docker.exec(ref, "cat /workdir/.nano.yaml")
 
     steps =
@@ -64,20 +67,27 @@ defmodule NanoCi.Builder.Runner do
         ["apk add rust cargo", "cd /workdir && cargo test"]
       end
 
-    {ref, steps}
+    {build, ref, steps}
   end
 
-  defp run_steps({ref, steps}) do
+  defp run_steps({build, ref, steps}) do
     results = steps |> Enum.map(&run_step(ref, &1))
-    {ref, results}
+    {build, ref, results}
   end
 
   defp run_step(ref, step) do
     Docker.exec(ref, step)
   end
 
-  defp summarize_results({ref, results}) do
+  defp summarize_results({build, ref, results}) do
     result = Enum.all?(results, fn {s, _} -> s == :ok end)
+
+    if result do
+      StatusWriter.set_status(build, "success")
+    else
+      StatusWriter.set_status(build, "failed")
+    end
+
     IO.puts("RESULT: #{result}")
     ref
   end
