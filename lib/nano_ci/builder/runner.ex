@@ -35,7 +35,7 @@ defmodule NanoCi.Builder.Runner do
     {:ok, _} = Docker.exec(ref, "mkdir /root/.ssh")
 
     {:ok, _} =
-      Docker.exec(
+      Docker.exec_no_log(
         ref,
         "ssh-keyscan github.com >> /root/.ssh/known_hosts"
       )
@@ -57,26 +57,22 @@ defmodule NanoCi.Builder.Runner do
   end
 
   defp parse_steps({build, ref}) do
-    {status, _output} = Docker.exec(ref, "cat /workdir/.nano.yaml")
+    {status, _output} = Docker.exec_no_log(ref, "cat /workdir/.nano.yaml")
 
     steps =
       if status == :ok do
         # TODO: Parse output
         []
       else
-        ["apk add rust cargo", "cd /workdir && cargo test"]
+        ["apk add rust cargo", "(cd /workdir && cargo test)"]
       end
 
     {build, ref, steps}
   end
 
   defp run_steps({build, ref, steps}) do
-    results = steps |> Enum.map(&run_step(ref, &1))
+    results = steps |> Enum.map(&Docker.exec(ref, &1))
     {build, ref, results}
-  end
-
-  defp run_step(ref, step) do
-    Docker.exec(ref, step)
   end
 
   defp summarize_results({build, ref, results}) do

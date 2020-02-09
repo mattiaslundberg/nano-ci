@@ -2,8 +2,7 @@ defmodule NanoCi.Builder.Docker do
   def start(image, name) do
     System.cmd("docker", [
       "run",
-      "-d",
-      "-it",
+      "-dti",
       "--rm",
       "--name",
       name,
@@ -14,7 +13,12 @@ defmodule NanoCi.Builder.Docker do
   end
 
   def exec(container_ref, command) do
-    System.cmd("docker", ["exec", container_ref, "sh", "-c", command]) |> parse_out()
+    exec_no_log(container_ref, "#{command} >> nano.log 2>&1")
+  end
+
+  def exec_no_log(container_ref, command) do
+    System.cmd("docker", ["exec", container_ref, "sh", "-c", command])
+    |> parse_out()
   end
 
   defp parse_out({out, code}) do
