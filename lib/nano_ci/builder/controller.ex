@@ -35,9 +35,18 @@ defmodule NanoCi.Builder.Controller do
   end
 
   @impl true
+  def handle_info({:timeout, build}, state) do
+    {pid, _} = Map.get(state, build.id, {nil, nil})
+    StatusWriter.set_status(build, "timeout")
+    Process.exit(pid, :timeout)
+    {:noreply, Map.delete(state, build.id)}
+  end
+
+  @impl true
   def handle_cast({:start_build, repo, build}, state) do
     {:ok, pid, ref} = Runner.start_link(repo, build)
     schedule(build, 1000)
+    Process.send_after(self(), {:timeout, build}, 100_000)
     {:noreply, Map.put(state, build.id, {pid, ref})}
   end
 
