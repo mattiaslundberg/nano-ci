@@ -15,6 +15,6 @@ defmodule NanoCi.Build do
   @doc false
   def changeset(%NanoCi.Build{} = build, attrs) do
     build
-    |> cast(attrs, [:status, :build_log, :revision])
+    |> cast(attrs, [:status, :build_log, :revision, :repo_id])
   end
 end
