@@ -3,6 +3,7 @@ defmodule NanoCiWeb.BuildController do
   alias NanoCi.GitRepo
   alias NanoCi.Repo
   alias NanoCi.Build
+  alias NanoCi.Builder.Controller
 
   def create(conn, %{"repo_id" => repo_id, "revision" => revision}) do
     repo = GitRepo |> Repo.get(repo_id)
@@ -44,6 +45,8 @@ defmodule NanoCiWeb.BuildController do
         status: "pending"
       })
       |> Repo.insert!()
+
+    Controller.start_build(repo, build)
 
     conn
     |> put_status(:created)

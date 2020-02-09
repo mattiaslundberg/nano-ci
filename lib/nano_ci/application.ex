@@ -11,9 +11,10 @@ defmodule NanoCi.Application do
       # Start the Ecto repository
       NanoCi.Repo,
       # Start the endpoint when the application starts
-      NanoCiWeb.Endpoint
+      NanoCiWeb.Endpoint,
       # Starts a worker by calling: NanoCi.Worker.start_link(arg)
       # {NanoCi.Worker, arg},
+      NanoCi.Builder.Controller
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html
