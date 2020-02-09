@@ -4,8 +4,9 @@ use Mix.Config
 config :nano_ci, NanoCi.Repo,
   username: "postgres",
   password: "postgres",
-  database: "nano_ci_dev",
+  database: "postgres",
   hostname: "localhost",
+  port: 15432,
   show_sensitive_data_on_connection_error: true,
   pool_size: 10
 

@@ -6,6 +6,7 @@ config :nano_ci, NanoCi.Repo,
   password: "postgres",
   database: "nano_ci_test",
   hostname: "localhost",
+  port: 15432,
   pool: Ecto.Adapters.SQL.Sandbox
 
 # We don't run a server during test. If one is required,
