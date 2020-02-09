@@ -19,7 +19,7 @@ Now you can visit [`localhost:4000`](http://localhost:4000) from your browser.
 
 ## TODO
 
- - [ ] Show logs in api while running
+ - [x] Show logs in api while running
  - [ ] Simple frontend (create build, show output etc)
  - [ ] Api for listing builds
  - [ ] Api and frontend for creating repos
