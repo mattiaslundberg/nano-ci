@@ -29,7 +29,7 @@ defmodule NanoCiWeb.BuildController do
 
   def display_build(conn, build = %Build{}) do
     conn
-    |> json(%{status: build.status})
+    |> json(%{status: build.status, build_log: build.build_log})
   end
 
   def display_build(conn, _) do

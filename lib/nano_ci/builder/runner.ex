@@ -6,14 +6,21 @@ defmodule NanoCi.Builder.Runner do
   use Task
 
   def start_link(repo = %GitRepo{}, build = %Build{}) do
-    Task.start_link(__MODULE__, :run, [repo, build])
+    ref = start_container(repo, build)
+    {:ok, pid} = Task.start_link(__MODULE__, :run, [ref, repo, build])
+    {:ok, pid, ref}
   end
 
-  def run(repo, build) do
+  def get_status(nil), do: nil
+
+  def get_status(ref) do
+    Docker.exec_no_log(ref, "cat nano.log")
+  end
+
+  def run(ref, repo, build) do
     StatusWriter.set_status(build, "running")
 
-    {repo, build}
-    |> start_container()
+    {repo, build, ref}
     |> checkout_code()
     |> parse_steps()
     |> run_steps()
@@ -21,9 +28,9 @@ defmodule NanoCi.Builder.Runner do
     |> stop_container()
   end
 
-  defp start_container({repo, build}) do
+  defp start_container(repo, build) do
     {:ok, ref} = Docker.start("alpine:latest", "nano-#{build.id}")
-    {repo, build, ref |> String.trim()}
+    ref |> String.trim()
   end
 
   defp checkout_code({repo, build, ref}) do
