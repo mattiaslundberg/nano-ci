@@ -28,13 +28,14 @@ defmodule NanoCi.Builder.Runner do
     :ok = IO.binwrite(file, repo.ssh_key)
     :ok = File.close(file)
 
-    Docker.exec(ref, "apk add git openssh")
-    Docker.exec(ref, "mkdir /root/.ssh")
+    {:ok, _} = Docker.exec(ref, "apk add git openssh")
+    {:ok, _} = Docker.exec(ref, "mkdir /root/.ssh")
 
-    Docker.exec(
-      ref,
-      "ssh-keyscan github.com >> /root/.ssh/known_hosts"
-    )
+    {:ok, _} =
+      Docker.exec(
+        ref,
+        "ssh-keyscan github.com >> /root/.ssh/known_hosts"
+      )
 
     {_, 0} =
       System.cmd("docker", [
@@ -43,10 +44,11 @@ defmodule NanoCi.Builder.Runner do
         "nano-#{build.id}:/root/.ssh/id_rsa"
       ])
 
-    Docker.exec(
-      ref,
-      "git clone #{repo.git_url} /workdir"
-    )
+    {:ok, _} =
+      Docker.exec(
+        ref,
+        "git clone #{repo.git_url} /workdir"
+      )
 
     ref
   end
