@@ -16,7 +16,7 @@ defmodule NanoCiWeb.Router do
   scope "/", NanoCiWeb do
     pipe_through :browser
 
-    resources "/", PageController, only: [:index, :show]
+    resources "/", PageController, only: [:index, :show, :create]
   end
 
   scope "/api", NanoCiWeb do

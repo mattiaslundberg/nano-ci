@@ -1,3 +1,12 @@
+<%= form_tag("/", method: :post, class: "create-build") %>
+  <select name="repo_id">
+    <%= for repo <- @repos do %>
+      <option value="<%= repo.id %>"><%= repo.name %></option>
+    <% end %>
+  </select>
+  <input type="text" name="revision"></input>
+  <button type="submit">Build</button>
+</form>
 <ol class="build-list">
   <%= for build <- @builds do %>
     <li>
