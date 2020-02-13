@@ -23,5 +23,6 @@ defmodule NanoCiWeb.Router do
     pipe_through :api
 
     resources "/build", BuildController, only: [:create, :show, :index]
+    resources "/github", GithubController, only: [:create]
   end
 end
