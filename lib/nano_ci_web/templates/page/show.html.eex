@@ -1,3 +1,4 @@
 <h1><%= @build.id %></h1>
 <p><%= @build.status %></p>
+<p><%= @build.revision %></p>
 <pre><%= @build.build_log %></pre>
