@@ -19,3 +19,7 @@
 .build-status {
     padding-left: 3rem;
 }
+
+.create-build {
+    display: flex;
+}
