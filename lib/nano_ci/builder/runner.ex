@@ -64,14 +64,14 @@ defmodule NanoCi.Builder.Runner do
   end
 
   defp parse_steps({build, ref}) do
-    {status, _output} = Docker.exec_no_log(ref, "cat /workdir/.nano.yaml")
+    {status, output} = Docker.exec_no_log(ref, "cat /workdir/.nano.yaml")
 
     steps =
       if status == :ok do
-        # TODO: Parse output
-        []
+        {:ok, yaml} = YamlElixir.read_from_string(output)
+        Map.get(yaml, "steps", [])
       else
-        ["apk add rust cargo", "(cd /workdir && cargo test)"]
+        []
       end
 
     {build, ref, steps}
