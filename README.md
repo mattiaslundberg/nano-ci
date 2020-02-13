@@ -21,6 +21,7 @@ Now you can visit [`localhost:4000`](http://localhost:4000) from your browser.
 
  - [x] Show logs in api while running
  - [ ] Simple frontend (create build, show output etc)
+ - [ ] Live update of buildlog
  - [x] Api for listing builds
  - [ ] Api and frontend for creating repos
  - [ ] User management
