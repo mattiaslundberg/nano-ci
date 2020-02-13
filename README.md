@@ -15,18 +15,7 @@ Now you can visit [`localhost:4000`](http://localhost:4000) from your browser.
 
 ## Deployment
 
- * TODO
-
-## TODO
-
- - [x] Show logs in api while running
- - [x] Simple frontend (create build, show output etc)
- - [ ] Live update of buildlog
- - [x] Api for listing builds
- - [ ] Api and frontend for creating repos
- - [ ] User management
- - [ ] Report status to github
- - [ ] Trigger build on github webhook
- - [ ] Document how to setup
- - [ ] Parse .nano.yaml and run steps in file
- - [ ] Support starting depending containers (from file, for example database)
+ * Start phoenix app expose behind https server
+ * Add github webhook for push events on your repo `https://your-url.com/api/github` (json)
+ * Connect to database and add urls and private deploy key in database and public key on github
+ * Add `.nano.yaml` with `steps` key for every step to run during the build
