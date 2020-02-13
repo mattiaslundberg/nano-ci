@@ -85,6 +85,14 @@ defmodule NanoCi.Builder.Runner do
   defp summarize_results({build, ref, results}) do
     result = Enum.all?(results, fn {s, _} -> s == :ok end)
 
+    case get_status(ref) do
+      {:ok, output} ->
+        StatusWriter.set_output(build, output)
+
+      _ ->
+        nil
+    end
+
     if result do
       StatusWriter.set_status(build, "success")
     else
