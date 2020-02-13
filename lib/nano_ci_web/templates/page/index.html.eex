@@ -1,7 +1,7 @@
 <ol class="build-list">
   <%= for build <- @builds do %>
     <li>
-      <a class="build-id" href="/"><%= build.id %></a>
+      <%= link build.id, to: "/#{build.id}", class: "build-id" %>
       <span class="build-status"><%= build.status %></span>
     </li>
   <% end %>
