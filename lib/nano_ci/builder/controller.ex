@@ -46,7 +46,7 @@ defmodule NanoCi.Builder.Controller do
   def handle_cast({:start_build, repo, build}, state) do
     {:ok, pid, ref} = Runner.start_link(repo, build)
     schedule(build, 1000)
-    Process.send_after(self(), {:timeout, build}, 100_000)
+    Process.send_after(self(), {:timeout, build}, 10_000_000)
     {:noreply, Map.put(state, build.id, {pid, ref})}
   end
 
