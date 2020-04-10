@@ -30,6 +30,6 @@ defmodule NanoCiWeb.BuildControllerTest do
       |> Repo.insert!()
 
     conn = get(conn, "/api/build/#{build.id}")
-    assert json_response(conn, 200) == %{"status" => "custom"}
+    assert json_response(conn, 200) == %{"status" => "custom", "build_log" => nil}
   end
 end
