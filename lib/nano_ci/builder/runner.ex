@@ -11,10 +11,8 @@ defmodule NanoCi.Builder.Runner do
     {:ok, pid, ref}
   end
 
-  def get_status(nil), do: nil
-
-  def get_status(ref) do
-    Docker.exec_no_log(ref, "cat nano.log")
+  def get_status(ref, status_writer) when not is_nil(ref) do
+    Docker.get_status(ref, status_writer)
   end
 
   def run(ref, repo, build) do
@@ -25,10 +23,10 @@ defmodule NanoCi.Builder.Runner do
     |> parse_steps()
     |> run_steps()
     |> summarize_results()
-    |> stop_container()
+    |> Docker.stop()
   end
 
-  defp start_container(repo, build) do
+  defp start_container(_repo, build) do
     {:ok, ref} = Docker.start("alpine:latest", "nano-#{build.id}")
     ref |> String.trim()
   end
@@ -85,14 +83,6 @@ defmodule NanoCi.Builder.Runner do
   defp summarize_results({build, ref, results}) do
     result = Enum.all?(results, fn {s, _} -> s == :ok end)
 
-    case get_status(ref) do
-      {:ok, output} ->
-        StatusWriter.set_output(build, output)
-
-      _ ->
-        nil
-    end
-
     if result do
       StatusWriter.set_status(build, "success")
     else
@@ -101,9 +91,5 @@ defmodule NanoCi.Builder.Runner do
 
     IO.puts("RESULT: #{result}")
     ref
-  end
-
-  defp stop_container(ref) do
-    System.cmd("docker", ["stop", ref])
   end
 end

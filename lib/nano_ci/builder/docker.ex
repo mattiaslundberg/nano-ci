@@ -12,8 +12,16 @@ defmodule NanoCi.Builder.Docker do
     |> parse_out()
   end
 
+  def stop(container_ref) do
+    System.cmd("docker", ["stop", container_ref])
+  end
+
   def exec(container_ref, command) do
     exec_no_log(container_ref, "#{command} >> nano.log 2>&1")
+  end
+
+  def get_status(container_ref, target) do
+    System.cmd("docker", ["logs", container_ref, "--follow"], into: target)
   end
 
   def exec_no_log(container_ref, command) do

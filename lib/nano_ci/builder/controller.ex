@@ -19,38 +19,20 @@ defmodule NanoCi.Builder.Controller do
   end
 
   @impl true
-  def handle_info({:get_output, build}, state) do
-    {_pid, ref} = Map.get(state, build.id, {nil, nil})
-
-    case Runner.get_status(ref) do
-      {:ok, output} ->
-        StatusWriter.set_output(build, output)
-
-        schedule(build, 1000)
-        {:noreply, state}
-
-      _ ->
-        {:noreply, Map.delete(state, build.id)}
-    end
-  end
-
-  @impl true
   def handle_info({:timeout, build}, state) do
-    {pid, _} = Map.get(state, build.id, {nil, nil})
+    {runner_pid, status_pid, _} = Map.get(state, build.id, {nil, nil})
     StatusWriter.set_status(build, "timeout")
-    Process.exit(pid, :timeout)
+    Process.exit(runner_pid, :timeout)
+    Process.exit(status_pid, :timeout)
     {:noreply, Map.delete(state, build.id)}
   end
 
   @impl true
   def handle_cast({:start_build, repo, build}, state) do
-    {:ok, pid, ref} = Runner.start_link(repo, build)
-    schedule(build, 1000)
+    {:ok, runner_pid, ref} = Runner.start_link(repo, build)
+    sw = %StatusWriter{build: build}
+    {:ok, status_pid} = Task.start_link(fn -> Runner.get_status(ref, sw) end)
     Process.send_after(self(), {:timeout, build}, 10_000_000)
-    {:noreply, Map.put(state, build.id, {pid, ref})}
-  end
-
-  defp schedule(build, check_interval) do
-    Process.send_after(self(), {:get_output, build}, check_interval)
+    {:noreply, Map.put(state, build.id, {runner_pid, status_pid, ref})}
   end
 end
